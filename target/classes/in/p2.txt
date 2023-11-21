@@ -1,0 +1,19 @@
+ceva a;
+ceva b;
+
+a <- 0;
+b <- 76;
+
+ceva c;
+amu_ia(c <- 2; c <=76; c <- c+1){
+	ii(b % c = 0){
+		a <- 1;
+		termina;
+	}
+}
+
+ii(a = 1){
+	pune -> "Prim";
+} nu_i {
+	pune -> "Nu-i prim";
+}

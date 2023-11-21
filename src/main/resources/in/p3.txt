@@ -1,0 +1,16 @@
+ceva a;
+ceva b;
+ceva c;
+
+a <- 85;
+b <- 3;
+
+ii (a>b) {
+	amu_ia(c <- b; c <= a; c <- c * 3){
+		pune -> c;
+	}
+	
+} nu_i {
+	pune -> "b > a";
+}
+
