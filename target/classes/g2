@@ -1,1 +1,28 @@
-terminals - alfabet, reserved words, serp, oper
+program declaration assignstmt iostmt simplstmt ifstmt whilestmt forstmt stmtlist stmt structstmt condition expression first_order_op second_order_op term factor RELATION IDENTIFIER NUMBER STRING string_base small_letter anything CHAR
+a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 0 1 2 3 4 5 6 7 8 9 ; -> { } ( ) + - * / < > <= >= = != " ' ceva pune ia ii nu_i atat_cat amu_ia
+program
+program | stmt
+declaration | ceva IDENTIFIER ;
+assignstmt | IDENTIFIER <- expression ;
+iostmt | pune -> expression | ia -> IDENTIFIER
+simplstmt | assignstmt | iostmt | declaration
+ifstmt | ii ( condition ) { stmt } | ii ( condition ) { stmt } nu_i { stmt }
+whilestmt | atata_cat ( condition ) { stmt }
+forstmt | amu_ia ( assignstmt condition ; assignstmt ) { stmt }
+stmtlist |stmt | stmt stmtlist 
+stmt | simplstmt | structstmt
+structstmt | stmtlist | ifstmt | whilestmt | forstmt
+condition | expression RELATION expression
+expression | expression first_order_op term | term
+first_order_op | + | -
+second_order_op | / | *
+term | term second_order_op factor | factor
+factor | expression | IDENTIFIER | NUMBER | STRING | CHAR
+RELATION | < | <= | = | >= | > | !=
+IDENTIFIER | small_letter | IDENTIFIER small_letter
+small_letter | a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
+NUMBER | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
+STRING | " string_base "
+string_base | anything | string_base anything
+CHAR | ' anything '
+anything | a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z | A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | ; | -> | { | } | ( | ) | + | - | * | / | < | > | = | != | "

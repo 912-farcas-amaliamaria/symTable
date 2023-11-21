@@ -1,8 +1,12 @@
 package org.example;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.io.InputStream;
 import java.util.*;
 
+@Getter
 public class Grammar {
 
     private String filePath;
@@ -51,6 +55,10 @@ public class Grammar {
                 }
             }
         }
+    }
+
+    Set<List<String>> getProdForOne(String terminal){
+        return this.production.get(terminal);
     }
 }
 
