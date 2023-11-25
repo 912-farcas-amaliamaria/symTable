@@ -17,7 +17,8 @@ public class Main {
             System.out.println("2. Set of nonterminals");
             System.out.println("3. Set of productions");
             System.out.println("4. Set of productions for one nonterminal");
-            System.out.println("5. Exit");
+            System.out.println("5. Verify if this is a context-free grammar");
+            System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
 
             try {
@@ -37,7 +38,8 @@ public class Main {
                     String nonterminal = scanner.nextLine();
                     System.out.println(grammar.getProdForOne(nonterminal));
                 }
-                case 5 -> System.out.println("Goodbye!");
+                case 5 -> System.out.println(grammar.isCFG());
+                case 6 -> System.out.println("Goodbye!");
                 default -> System.out.println("Invalid choice. Please select a valid option.");
             }
         } while (choice != 3);

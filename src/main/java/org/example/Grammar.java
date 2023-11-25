@@ -60,5 +60,13 @@ public class Grammar {
     Set<List<String>> getProdForOne(String terminal){
         return this.production.get(terminal);
     }
+
+    boolean isCFG() {
+        for (String s : this.production.keySet())
+            if (!this.nonterminals.contains(s))
+                return false;
+        return true;
+    }
+
 }
 
