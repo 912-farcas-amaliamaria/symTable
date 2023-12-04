@@ -36,13 +36,40 @@ public class GrammarTestsFirst {
         Set<String> expected = new HashSet<>(Arrays.asList("a", "b"));
         assertEquals(expected, grammar.getFirstSet("C"));
     }
+    
 
     @Test
-    public void testFirstD() {
+    public void testFollowS() {
         Grammar grammar = new Grammar(pathG1);
-        Set<String> expected = new HashSet<>(Arrays.asList("b", "d"));
-        assertEquals(expected, grammar.getFirstSet("D"));
+        Set<String> expected = new HashSet<>(Arrays.asList("$"));
+        assertEquals(expected, grammar.getFollowSet("S"));
     }
+
+    @Test
+    public void testFollowA() {
+        Grammar grammar = new Grammar(pathG1);
+
+        Set<String> expected = new HashSet<>(grammar.getFollowSet("S"));
+        assertEquals(expected, grammar.getFollowSet("A"));
+    }
+
+    @Test
+    public void testFollowB() {
+        Grammar grammar = new Grammar(pathG1);
+
+        Set<String> expected = new HashSet<>(grammar.getFollowSet("A"));
+        expected.addAll(grammar.getFollowSet("D"));
+        assertEquals(expected, grammar.getFollowSet("B"));
+    }
+
+    @Test
+    public void testFollowC() {
+        Grammar grammar = new Grammar(pathG1);
+        Set<String> expected = new HashSet<>(Arrays.asList("b"));
+        expected.addAll(grammar.getFollowSet("S"));
+        assertEquals(expected, grammar.getFollowSet("C"));
+    }
+
 
     //tests g2
 

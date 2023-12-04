@@ -15,6 +15,8 @@ public class Grammar {
     private final Map<String, Set<List<String>>> production;
 
     private Map<String, Set<String>> firstSets;
+    private Map<String, Set<String>> followSets;
+
 
 
     public Grammar(String filePath) {
@@ -22,6 +24,7 @@ public class Grammar {
         this.production = new HashMap<>();
         readFile();
         calculateFirstSets();
+        calculateFollowSets();
     }
 
     private void readFile() {
@@ -121,8 +124,62 @@ public class Grammar {
         return true;
     }
 
+
+    private void calculateFollowSets() {
+        followSets = new HashMap<>();
+        for (String nonterminal : nonterminals) {
+            followSets.put(nonterminal, new HashSet<>());
+        }
+
+        // Adding end-of-input marker to the FOLLOW set of the start symbol
+        followSets.get(initialState).add("$");
+
+        boolean changed;
+        do {
+            changed = false;
+            for (Map.Entry<String, Set<List<String>>> entry : production.entrySet()) {
+                String lhs = entry.getKey(); // Left-hand side of the production
+                for (List<String> prod : entry.getValue()) {
+                    for (int i = 0; i < prod.size(); i++) {
+                        String symbol = prod.get(i);
+                        if (nonterminals.contains(symbol)) {
+                            Set<String> followSet = followSets.get(symbol);
+                            int initialSize = followSet.size();
+
+                            // Handling the symbol that follows the current non-terminal
+                            if (i + 1 < prod.size()) {
+                                String nextSymbol = prod.get(i + 1);
+                                if (nonterminals.contains(nextSymbol)) {
+                                    followSet.addAll(firstSets.get(nextSymbol));
+                                    followSet.remove("ε"); // Remove ε if present
+                                    if (firstSets.get(nextSymbol).contains("ε")) {
+                                        followSet.addAll(followSets.get(lhs));
+                                    }
+                                } else {
+                                    followSet.add(nextSymbol);
+                                }
+                            } else {
+                                // If it's the last symbol in the production, add FOLLOW(lhs)
+                                followSet.addAll(followSets.get(lhs));
+                            }
+
+                            if (followSet.size() > initialSize) {
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+        } while (changed);
+    }
+
+
     public Set<String> getFirstSet(String nonTerminal) {
         return firstSets.getOrDefault(nonTerminal, Collections.emptySet());
+    }
+
+    public Set<String> getFollowSet(String nonTerminal) {
+        return followSets.getOrDefault(nonTerminal, Collections.emptySet());
     }
 
 }
