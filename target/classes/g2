@@ -9,7 +9,7 @@ simplstmt | assignstmt | iostmt | declaration
 ifstmt | ii ( condition ) { stmt } | ii ( condition ) { stmt } nu_i { stmt }
 whilestmt | atata_cat ( condition ) { stmt }
 forstmt | amu_ia ( assignstmt condition ; assignstmt ) { stmt }
-stmtlist |stmt | stmt stmtlist 
+stmtlist | stmt | stmt stmtlist
 stmt | simplstmt | structstmt
 structstmt | stmtlist | ifstmt | whilestmt | forstmt
 condition | expression RELATION expression
