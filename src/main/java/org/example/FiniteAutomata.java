@@ -35,7 +35,7 @@ public class FiniteAutomata {
             System.err.println("Resource file not found.");
             return;
         }
-        Scanner scanner = new Scanner(inputStream);
+        java.util.Scanner scanner = new java.util.Scanner(inputStream);
         scanner.useDelimiter("\r\n");
         int currentLine = 0;
         String line;

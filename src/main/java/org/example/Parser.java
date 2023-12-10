@@ -5,7 +5,6 @@ import lombok.Getter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,7 +51,7 @@ public class Parser {
             System.err.println("Resource file not found.");
             return;
         }
-        Scanner scanner = new Scanner(inputStream);
+        java.util.Scanner scanner = new java.util.Scanner(inputStream);
 
         // Use whitespace as the default delimiter (can be customized)
         scanner.useDelimiter("");

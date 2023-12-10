@@ -34,7 +34,7 @@ public class Grammar {
             System.err.println("Resource file not found.");
             return;
         }
-        Scanner scanner = new Scanner(inputStream);
+        java.util.Scanner scanner = new java.util.Scanner(inputStream);
         scanner.useDelimiter("\r\n");
         int currentLine = 0;
         String line;
@@ -180,6 +180,51 @@ public class Grammar {
 
     public Set<String> getFollowSet(String nonTerminal) {
         return followSets.getOrDefault(nonTerminal, Collections.emptySet());
+    }
+
+
+    private Map<Pair<String, String>, List<String>> parsingTable;
+
+    public void createParsingTable() {
+        parsingTable = new HashMap<>();
+
+        // Iterate over all non-terminals
+        for (String nonTerminal : nonterminals) {
+            for (List<String> production : this.production.get(nonTerminal)) {
+                // Get the first symbol of the production or ε if the production is empty
+                String firstSymbol = production.isEmpty() ? "ε" : production.get(0);
+
+                if (terminals.contains(firstSymbol)) {
+                    // Terminal: add directly to the parsing table
+                    parsingTable.put(new Pair<>(nonTerminal, firstSymbol), production);
+                } else if (nonTerminal.equals(firstSymbol)) {
+                    // Handle ε-productions
+                    for (String followSymbol : followSets.get(nonTerminal)) {
+                        parsingTable.put(new Pair<>(nonTerminal, followSymbol), production);
+                    }
+                } else {
+                    // Non-terminal: add productions based on FIRST and FOLLOW sets
+                    Set<String> firstSet = firstSets.getOrDefault(firstSymbol, Collections.emptySet());
+                    for (String symbol : firstSet) {
+                        if (!symbol.equals("ε")) {
+                            parsingTable.put(new Pair<>(nonTerminal, symbol), production);
+                        }
+                    }
+
+                    // If ε is in FIRST(firstSymbol), also consider FOLLOW(nonTerminal)
+                    if (firstSet.contains("ε")) {
+                        Set<String> followSet = followSets.get(nonTerminal);
+                        for (String followSymbol : followSet) {
+                            parsingTable.put(new Pair<>(nonTerminal, followSymbol), production);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public List<String> getProductionRule(String nonTerminal, String terminal) {
+        return parsingTable.getOrDefault(new Pair<>(nonTerminal, terminal), Collections.emptyList());
     }
 
 }
