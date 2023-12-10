@@ -25,6 +25,7 @@ public class Grammar {
         readFile();
         calculateFirstSets();
         calculateFollowSets();
+        createParsingTable();
     }
 
     private void readFile() {

@@ -1,15 +1,30 @@
 package org.example;
 
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         Grammar grammar = new Grammar("/g2");
 
         Scanner scanner = new Scanner(System.in);
         int choice;
+
+        InputStream pragramInputStream = Parser.class.getResourceAsStream("/in/p1.txt");
+
+        if (pragramInputStream == null) {
+            System.err.println("Resource file not found.");
+            return;
+        }
+        java.util.Scanner fileScanner = new java.util.Scanner(pragramInputStream);
+        fileScanner.useDelimiter("\u001a");
+        String program = fileScanner.next();
 
         do {
             System.out.println("Menu:");
@@ -18,7 +33,8 @@ public class Main {
             System.out.println("3. Set of productions");
             System.out.println("4. Set of productions for one nonterminal");
             System.out.println("5. Verify if this is a context-free grammar");
-            System.out.println("6. Exit");
+            System.out.println("6. Parse");
+            System.out.println("7. Exit");
             System.out.print("Enter your choice: ");
 
             try {
@@ -39,7 +55,11 @@ public class Main {
                     System.out.println(grammar.getProdForOne(nonterminal));
                 }
                 case 5 -> System.out.println(grammar.isCFG());
-                case 6 -> System.out.println("Goodbye!");
+                case 6 -> {
+                    LL1Parser parser = new LL1Parser(grammar);
+                    parser.parseAndPrint(program);
+                }
+                case 7 -> System.out.println("Goodbye!");
                 default -> System.out.println("Invalid choice. Please select a valid option.");
             }
         } while (choice != 3);
