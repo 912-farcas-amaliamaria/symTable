@@ -48,10 +48,15 @@ public class SymbolTable {
         return new Tuple(-1, -1);
     }
 
-/*    public Object searchByCode(Pair<Integer, Integer> code){
-        int hashCode = code.getKey();
-        List<>
-    }*/
+    public Object searchByCode(Tuple code){
+        int hashCode = code.getHash();
+        int index = code.getPos();
+
+        ArrayList<Pair<Object, Tuple>> listAtHash = elements.get(hashCode);
+
+        return listAtHash.get(index).getKey();
+
+    }
 
     public void writeToFile(String filePath){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {

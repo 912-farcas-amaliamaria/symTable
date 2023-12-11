@@ -2,16 +2,14 @@ package org.example;
 
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
-        Grammar grammar = new Grammar("/g2");
+        FiniteAutomata finiteAutomataIdentifier = new FiniteAutomata("/FA_identifier.in");
+        FiniteAutomata finiteAutomataInt = new FiniteAutomata("/FA_int.in");
+        Parser parser = new Parser(finiteAutomataIdentifier, finiteAutomataInt, "/g3");
 
         Scanner scanner = new Scanner(System.in);
         int choice;
@@ -33,8 +31,9 @@ public class Main {
             System.out.println("3. Set of productions");
             System.out.println("4. Set of productions for one nonterminal");
             System.out.println("5. Verify if this is a context-free grammar");
-            System.out.println("6. Parse");
-            System.out.println("7. Exit");
+            System.out.println("6. Parsing table");
+            System.out.println("7. Parse");
+            System.out.println("8. Exit");
             System.out.print("Enter your choice: ");
 
             try {
@@ -45,24 +44,27 @@ public class Main {
             }
 
             switch (choice) {
-                case 1 -> System.out.println(grammar.getTerminals());
-                case 2 -> System.out.println(grammar.getNonterminals());
-                case 3 -> System.out.println(grammar.getProduction());
+                case 1 -> System.out.println(parser.getGrammar().getTerminals());
+                case 2 -> System.out.println(parser.getGrammar().getNonterminals());
+                case 3 -> System.out.println(parser.getGrammar().getProduction());
                 case 4 -> {
                     scanner.nextLine(); // Consume the newline character
                     System.out.print("Enter a nonterminal: ");
                     String nonterminal = scanner.nextLine();
-                    System.out.println(grammar.getProdForOne(nonterminal));
+                    System.out.println(parser.getGrammar().getProdForOne(nonterminal));
                 }
-                case 5 -> System.out.println(grammar.isCFG());
+                case 5 -> System.out.println(parser.getGrammar().isCFG());
                 case 6 -> {
-                    LL1Parser parser = new LL1Parser(grammar);
-                    parser.parseAndPrint(program);
+                    System.out.println(parser.getParsingTable().toString());
+
                 }
-                case 7 -> System.out.println("Goodbye!");
+                case 7 -> {
+                    parser.parse();
+                }
+                case 8 -> System.out.println("Goodbye!");
                 default -> System.out.println("Invalid choice. Please select a valid option.");
             }
-        } while (choice != 3);
+        } while (choice != 8);
 
         scanner.close();
 

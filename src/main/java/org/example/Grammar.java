@@ -14,18 +14,12 @@ public class Grammar {
     private String initialState;
     private final Map<String, Set<List<String>>> production;
 
-    private Map<String, Set<String>> firstSets;
-    private Map<String, Set<String>> followSets;
-
-
 
     public Grammar(String filePath) {
         this.filePath = filePath;
         this.production = new HashMap<>();
         readFile();
-        calculateFirstSets();
-        calculateFollowSets();
-        createParsingTable();
+
     }
 
     private void readFile() {
@@ -73,160 +67,5 @@ public class Grammar {
                 return false;
         return true;
     }
-
-    private void calculateFirstSets() {
-        firstSets = new HashMap<>();
-        // Initialize FIRST sets for non-terminals
-        for (String nonterminal : nonterminals) {
-            firstSets.put(nonterminal, new HashSet<>());
-        }
-
-        boolean changed;
-        do {
-            changed = false;
-            for (String nonterminal : nonterminals) {
-                Set<String> firstSet = firstSets.get(nonterminal);
-                int initialSize = firstSet.size();
-                for (List<String> production : this.production.get(nonterminal)) {
-                    if (production.isEmpty()) {
-                        // Handle epsilon
-                        firstSet.add("ε");
-                        continue;
-                    }
-
-                    String firstSymbol = production.get(0);
-                    if (terminals.contains(firstSymbol)) {
-                        // Add terminal to the FIRST set
-                        firstSet.add(firstSymbol);
-                    } else if (nonterminals.contains(firstSymbol)) {
-                        // Add all non-ε elements of FIRST(firstSymbol) to the FIRST set
-                        firstSet.addAll(firstSets.get(firstSymbol));
-                        firstSet.remove("ε");
-                    }
-
-                    // Add ε if all symbols in production can derive ε
-                    if (allCanDeriveEpsilon(production)) {
-                        firstSet.add("ε");
-                    }
-                }
-                if (firstSet.size() != initialSize) {
-                    changed = true;
-                }
-            }
-        } while (changed);
-    }
-
-    private boolean allCanDeriveEpsilon(List<String> symbols) {
-        for (String symbol : symbols) {
-            if (!firstSets.getOrDefault(symbol, Collections.emptySet()).contains("ε")) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    private void calculateFollowSets() {
-        followSets = new HashMap<>();
-        for (String nonterminal : nonterminals) {
-            followSets.put(nonterminal, new HashSet<>());
-        }
-
-        // Adding end-of-input marker to the FOLLOW set of the start symbol
-        followSets.get(initialState).add("$");
-
-        boolean changed;
-        do {
-            changed = false;
-            for (Map.Entry<String, Set<List<String>>> entry : production.entrySet()) {
-                String lhs = entry.getKey(); // Left-hand side of the production
-                for (List<String> prod : entry.getValue()) {
-                    for (int i = 0; i < prod.size(); i++) {
-                        String symbol = prod.get(i);
-                        if (nonterminals.contains(symbol)) {
-                            Set<String> followSet = followSets.get(symbol);
-                            int initialSize = followSet.size();
-
-                            // Handling the symbol that follows the current non-terminal
-                            if (i + 1 < prod.size()) {
-                                String nextSymbol = prod.get(i + 1);
-                                if (nonterminals.contains(nextSymbol)) {
-                                    followSet.addAll(firstSets.get(nextSymbol));
-                                    followSet.remove("ε"); // Remove ε if present
-                                    if (firstSets.get(nextSymbol).contains("ε")) {
-                                        followSet.addAll(followSets.get(lhs));
-                                    }
-                                } else {
-                                    followSet.add(nextSymbol);
-                                }
-                            } else {
-                                // If it's the last symbol in the production, add FOLLOW(lhs)
-                                followSet.addAll(followSets.get(lhs));
-                            }
-
-                            if (followSet.size() > initialSize) {
-                                changed = true;
-                            }
-                        }
-                    }
-                }
-            }
-        } while (changed);
-    }
-
-
-    public Set<String> getFirstSet(String nonTerminal) {
-        return firstSets.getOrDefault(nonTerminal, Collections.emptySet());
-    }
-
-    public Set<String> getFollowSet(String nonTerminal) {
-        return followSets.getOrDefault(nonTerminal, Collections.emptySet());
-    }
-
-
-    private Map<Pair<String, String>, List<String>> parsingTable;
-
-    public void createParsingTable() {
-        parsingTable = new HashMap<>();
-
-        // Iterate over all non-terminals
-        for (String nonTerminal : nonterminals) {
-            for (List<String> production : this.production.get(nonTerminal)) {
-                // Get the first symbol of the production or ε if the production is empty
-                String firstSymbol = production.isEmpty() ? "ε" : production.get(0);
-
-                if (terminals.contains(firstSymbol)) {
-                    // Terminal: add directly to the parsing table
-                    parsingTable.put(new Pair<>(nonTerminal, firstSymbol), production);
-                } else if (nonTerminal.equals(firstSymbol)) {
-                    // Handle ε-productions
-                    for (String followSymbol : followSets.get(nonTerminal)) {
-                        parsingTable.put(new Pair<>(nonTerminal, followSymbol), production);
-                    }
-                } else {
-                    // Non-terminal: add productions based on FIRST and FOLLOW sets
-                    Set<String> firstSet = firstSets.getOrDefault(firstSymbol, Collections.emptySet());
-                    for (String symbol : firstSet) {
-                        if (!symbol.equals("ε")) {
-                            parsingTable.put(new Pair<>(nonTerminal, symbol), production);
-                        }
-                    }
-
-                    // If ε is in FIRST(firstSymbol), also consider FOLLOW(nonTerminal)
-                    if (firstSet.contains("ε")) {
-                        Set<String> followSet = followSets.get(nonTerminal);
-                        for (String followSymbol : followSet) {
-                            parsingTable.put(new Pair<>(nonTerminal, followSymbol), production);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public List<String> getProductionRule(String nonTerminal, String terminal) {
-        return parsingTable.getOrDefault(new Pair<>(nonTerminal, terminal), Collections.emptyList());
-    }
-
 }
 
