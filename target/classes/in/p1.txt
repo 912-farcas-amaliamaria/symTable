@@ -1,4 +1,4 @@
-ceva a ;
+ceva a;
 ceva b;
 ceva c;
 

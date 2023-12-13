@@ -13,7 +13,7 @@ public class GrammarTestsFirst {
     public void testFirstS() {
         Grammar grammar = new Grammar(pathG1);
         Set<String> expected = new HashSet<>(Arrays.asList("a"));
-        assertEquals(expected, grammar.getFirstSet("S"));
+        assertEquals(expected, grammar.getFirstSets("S"));
     }
 
     @Test

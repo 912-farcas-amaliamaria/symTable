@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 public class ParseTable {
-    private Map<Pair<String, String>, List<String>> table = new HashMap<>();
+    private Map<Pair<String, String>, Pair<List<String>, Integer>> table = new HashMap<>();
 
-    public void put(Pair<String, String> key, List<String> value) {
+    public void put(Pair<String, String> key, Pair<List<String>, Integer> value) {
         table.put(key, value);
     }
 
-    public List<String> get(Pair<String, String> key) {
-        for (Map.Entry<Pair<String, String>, List<String>> entry : table.entrySet()) {
+    public Pair<List<String>, Integer> get(Pair<String, String> key) {
+        for (Map.Entry<Pair<String, String>, Pair<List<String>, Integer>> entry : table.entrySet()) {
             if (entry.getValue() != null) {
                 Pair<String, String> currentKey = entry.getKey();
-                List<String> currentValue = entry.getValue();
+                Pair<List<String>, Integer> currentValue = entry.getValue();
 
                 if (currentKey.getKey().equals(key.getKey()) && currentKey.getValue().equals(key.getValue())) {
                     return currentValue;
@@ -34,6 +34,7 @@ public class ParseTable {
         for (Pair<String, String> currentKey : table.keySet()) {
             if (currentKey.getKey().equals(key.getKey()) && currentKey.getValue().equals(key.getValue())) {
                 result = true;
+                break;
             }
         }
 
@@ -44,20 +45,18 @@ public class ParseTable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (Map.Entry<Pair<String, String>,List<String>> entry : table.entrySet()) {
+        for (Map.Entry<Pair<String, String>, Pair<List<String>, Integer>> entry : table.entrySet()) {
             if (entry.getValue() != null) {
                 Pair<String, String> key = entry.getKey();
-                List<String> value = entry.getValue();
+                Pair<List<String>, Integer> value = entry.getValue();
 
                 sb.append("M[").append(key.getKey()).append(",").append(key.getValue()).append("] = [")
-                        .append(value).append("]\n");
+                        .append(value.getKey()).append(",").append(value.getValue()).append("]\n");
             }
         }
 
-        writeToFile(sb);
         return sb.toString();
     }
-
     public static void writeToFile(StringBuilder stringBuilder) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("parserOut.txt"))) {
             writer.write(stringBuilder.toString());

@@ -9,7 +9,7 @@ public class Main {
 
         FiniteAutomata finiteAutomataIdentifier = new FiniteAutomata("/FA_identifier.in");
         FiniteAutomata finiteAutomataInt = new FiniteAutomata("/FA_int.in");
-        Parser parser = new Parser(finiteAutomataIdentifier, finiteAutomataInt, "/g3");
+        Parser parser = new Parser(finiteAutomataIdentifier, finiteAutomataInt, "/g4");
 
         Scanner scanner = new Scanner(System.in);
         int choice;
@@ -55,11 +55,11 @@ public class Main {
                 }
                 case 5 -> System.out.println(parser.getGrammar().isCFG());
                 case 6 -> {
-                    System.out.println(parser.getParsingTable().toString());
+                    System.out.println(parser.getParseTable().toString());
 
                 }
                 case 7 -> {
-                    parser.parse();
+                    System.out.println(parser.parseSource());
                 }
                 case 8 -> System.out.println("Goodbye!");
                 default -> System.out.println("Invalid choice. Please select a valid option.");

@@ -12,7 +12,7 @@ public class Grammar {
     private Set<String> nonterminals;
     private Set<String> terminals;
     private String initialState;
-    private final Map<String, Set<List<String>>> production;
+    private final Map<String, List<List<String>>> production;
 
 
     public Grammar(String filePath) {
@@ -47,7 +47,7 @@ public class Grammar {
                 default -> {
                     tokens = line.split(" \\| ");
                     String key = tokens[0];
-                    Set<List<String>> value = this.production.computeIfAbsent(key, k -> new HashSet<>());
+                    List<List<String>> value = this.production.computeIfAbsent(key, k -> new ArrayList<>());
                     for (int i = 1; i < tokens.length; i++) {
                         String[] prod = tokens[i].split(" ");
                         value.add(Arrays.asList(prod));
@@ -57,7 +57,7 @@ public class Grammar {
         }
     }
 
-    public Set<List<String>> getProdForOne(String terminal){
+    public List<List<String>> getProdForOne(String terminal){
         return this.production.get(terminal);
     }
 
@@ -66,6 +66,18 @@ public class Grammar {
             if (!this.nonterminals.contains(s))
                 return false;
         return true;
+    }
+
+    public Map<String, List<List<String>>> getProductionsContainingNonterminal(String nonTerminal) {
+        Map<String, List<List<String>>> prod = new HashMap<>();
+        for (Map.Entry<String, List<List<String>>> p : production.entrySet()) {
+            for(List<String> list : p.getValue()){
+                if(list.contains(nonTerminal)){
+                    prod.put(p.getKey(), p.getValue());
+                }
+            }
+        }
+        return prod;
     }
 }
 
