@@ -1,4 +1,6 @@
+import org.example.FiniteAutomata;
 import org.example.Grammar;
+import org.example.Parser;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.*;
@@ -8,66 +10,61 @@ public class GrammarTestsFirst {
     String pathG1 = "/g1";
     String pathG2 = "/g3";
 
+    FiniteAutomata finiteAutomataIdentifier = new FiniteAutomata("/FA_identifier.in");
+    FiniteAutomata finiteAutomataInt = new FiniteAutomata("/FA_int.in");
+    Parser parserg1 = new Parser(finiteAutomataIdentifier, finiteAutomataInt, "/g4");
+    Parser parserg2 = new Parser(finiteAutomataIdentifier, finiteAutomataInt, "/g1");
+
     //tests g1
     @Test
     public void testFirstS() {
-        Grammar grammar = new Grammar(pathG1);
         Set<String> expected = new HashSet<>(Arrays.asList("a"));
-        assertEquals(expected, grammar.getFirstSets("S"));
+        assertEquals(expected, parserg1.getFirstSet("S"));
     }
 
     @Test
     public void testFirstA() {
-        Grammar grammar = new Grammar(pathG1);
         Set<String> expected = new HashSet<>(Arrays.asList("a"));
-        assertEquals(expected, grammar.getFirstSet("A"));
+        assertEquals(expected, parserg1.getFirstSet("A"));
     }
 
     @Test
     public void testFirstB() {
-        Grammar grammar = new Grammar(pathG1);
         Set<String> expected = new HashSet<>(Arrays.asList("b"));
-        assertEquals(expected, grammar.getFirstSet("B"));
+        assertEquals(expected, parserg1.getFirstSet("B"));
     }
 
     @Test
     public void testFirstC() {
-        Grammar grammar = new Grammar(pathG1);
         Set<String> expected = new HashSet<>(Arrays.asList("a", "b"));
-        assertEquals(expected, grammar.getFirstSet("C"));
+        assertEquals(expected, parserg1.getFirstSet("C"));
     }
     
 
     @Test
     public void testFollowS() {
-        Grammar grammar = new Grammar(pathG1);
         Set<String> expected = new HashSet<>(Arrays.asList("$"));
-        assertEquals(expected, grammar.getFollowSet("S"));
+        assertEquals(expected, parserg1.getFollowSet("S"));
     }
 
     @Test
     public void testFollowA() {
-        Grammar grammar = new Grammar(pathG1);
-
-        Set<String> expected = new HashSet<>(grammar.getFollowSet("S"));
-        assertEquals(expected, grammar.getFollowSet("A"));
+        Set<String> expected = new HashSet<>(parserg1.getFollowSet("S"));
+        assertEquals(expected, parserg1.getFollowSet("A"));
     }
 
     @Test
     public void testFollowB() {
-        Grammar grammar = new Grammar(pathG1);
-
-        Set<String> expected = new HashSet<>(grammar.getFollowSet("A"));
-        expected.addAll(grammar.getFollowSet("D"));
-        assertEquals(expected, grammar.getFollowSet("B"));
+        Set<String> expected = new HashSet<>(parserg1.getFollowSet("A"));
+        expected.addAll(parserg1.getFollowSet("D"));
+        assertEquals(expected, parserg1.getFollowSet("B"));
     }
 
     @Test
     public void testFollowC() {
-        Grammar grammar = new Grammar(pathG1);
         Set<String> expected = new HashSet<>(Arrays.asList("b"));
-        expected.addAll(grammar.getFollowSet("S"));
-        assertEquals(expected, grammar.getFollowSet("C"));
+        expected.addAll(parserg1.getFollowSet("S"));
+        assertEquals(expected, parserg1.getFollowSet("C"));
     }
 
 
@@ -75,106 +72,93 @@ public class GrammarTestsFirst {
 
     @Test
     public void testFirstProgram() {
-        Grammar grammar = new Grammar(pathG2);
-        Set<String> expected = grammar.getFirstSet("stmt");
-        assertEquals(expected, grammar.getFirstSet("program"));
+        Set<String> expected = parserg2.getFirstSet("stmt");
+        assertEquals(expected, parserg2.getFirstSet("program"));
     }
 
     @Test
     public void testFirstStmt() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
-        expected.addAll(grammar.getFirstSet("simplstmt"));
-        expected.addAll(grammar.getFirstSet("structstmt"));
-        assertEquals(expected, grammar.getFirstSet("stmt"));
+        expected.addAll(parserg2.getFirstSet("simplstmt"));
+        expected.addAll(parserg2.getFirstSet("structstmt"));
+        assertEquals(expected, parserg2.getFirstSet("stmt"));
     }
 
     @Test
     public void testFirstSimplStmt() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
-        expected.addAll(grammar.getFirstSet("assignstmt"));
-        expected.addAll(grammar.getFirstSet("iostmt"));
-        expected.addAll(grammar.getFirstSet("declaration"));
-        assertEquals(expected, grammar.getFirstSet("simplstmt"));
+        expected.addAll(parserg2.getFirstSet("assignstmt"));
+        expected.addAll(parserg2.getFirstSet("iostmt"));
+        expected.addAll(parserg2.getFirstSet("declaration"));
+        assertEquals(expected, parserg2.getFirstSet("simplstmt"));
     }
 
     @Test
     public void testFirstAssignStmt() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
-        expected.addAll(grammar.getFirstSet("IDENTIFIER"));
-        assertEquals(expected, grammar.getFirstSet("assignstmt"));
+        expected.addAll(parserg2.getFirstSet("IDENTIFIER"));
+        assertEquals(expected, parserg2.getFirstSet("assignstmt"));
     }
 
     @Test
     public void testFirstIoStmt() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>(Arrays.asList("pune", "ia"));
-        assertEquals(expected, grammar.getFirstSet("iostmt"));
+        assertEquals(expected, parserg2.getFirstSet("iostmt"));
     }
 
     @Test
     public void testFirstIdentifier() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
-        assertEquals(expected, grammar.getFirstSet("IDENTIFIER"));
+        assertEquals(expected, parserg2.getFirstSet("IDENTIFIER"));
     }
 
     @Test
     public void testFirstExpression() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
-        expected.addAll(grammar.getFirstSet("term"));
-        assertEquals(expected, grammar.getFirstSet("expression"));
+        expected.addAll(parserg2.getFirstSet("term"));
+        assertEquals(expected, parserg2.getFirstSet("expression"));
     }
 
     @Test
     public void testFirstExpression1() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
-        expected.addAll(grammar.getFirstSet("first_order_op"));
-        assertEquals(expected, grammar.getFirstSet("expression1"));
+        expected.addAll(parserg2.getFirstSet("first_order_op"));
+        assertEquals(expected, parserg2.getFirstSet("expression1"));
     }
 
     @Test
     public void testFirstFirstOrederOp() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
         expected.addAll(Arrays.asList("+", "-"));
-        assertEquals(expected, grammar.getFirstSet("first_order_op"));
+        assertEquals(expected, parserg2.getFirstSet("first_order_op"));
     }
 
     @Test
     public void testFirstSecondOrederOp() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
         expected.addAll(Arrays.asList("*", "/"));
-        assertEquals(expected, grammar.getFirstSet("second_order_op"));
+        assertEquals(expected, parserg2.getFirstSet("second_order_op"));
     }
     @Test
     public void testFirstTerm() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
-        expected.addAll(grammar.getFirstSet("factor"));
-        assertEquals(expected, grammar.getFirstSet("term"));
+        expected.addAll(parserg2.getFirstSet("factor"));
+        assertEquals(expected, parserg2.getFirstSet("term"));
     }
 
     @Test
     public void testFirstTerm1() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
-        expected.addAll(grammar.getFirstSet("second_order_op"));
-        assertEquals(expected, grammar.getFirstSet("term1"));
+        expected.addAll(parserg2.getFirstSet("second_order_op"));
+        assertEquals(expected, parserg2.getFirstSet("term1"));
     }
     @Test
     public void testFirstFactor() {
-        Grammar grammar = new Grammar(pathG2);
         Set<String> expected = new HashSet<>();
-        expected.addAll(grammar.getFirstSet("expression"));
-        expected.addAll(grammar.getFirstSet("IDENTIFIER"));
-        expected.addAll(grammar.getFirstSet("NUMBER"));
-        expected.addAll(grammar.getFirstSet("STRING"));expected.addAll(grammar.getFirstSet("CHAR"));
-        assertEquals(expected, grammar.getFirstSet("factor"));
+        expected.addAll(parserg2.getFirstSet("expression"));
+        expected.addAll(parserg2.getFirstSet("IDENTIFIER"));
+        expected.addAll(parserg2.getFirstSet("NUMBER"));
+        expected.addAll(parserg2.getFirstSet("STRING"));expected.addAll(parserg2.getFirstSet("CHAR"));
+        assertEquals(expected, parserg2.getFirstSet("factor"));
     }
 }

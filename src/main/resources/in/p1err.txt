@@ -1,14 +1,14 @@
-ceva A;
-ceva b_;
+ceva a;;
+ceva b;
 
 a <- 8;
 b <- 9;
 
 ceva c;
 
-ii ( a > v ) {
+ii { a > v ) {
 	amu_ia(c <- b; c <= a; c = c * 3){
-		ii(c==66){
+		ii(c=66){
 			pune -> "sari";
 		} nu_i {
 			pune -> c;

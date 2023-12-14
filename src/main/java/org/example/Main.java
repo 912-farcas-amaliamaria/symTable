@@ -33,7 +33,8 @@ public class Main {
             System.out.println("5. Verify if this is a context-free grammar");
             System.out.println("6. Parsing table");
             System.out.println("7. Parse");
-            System.out.println("8. Exit");
+            System.out.println("8. Set of productions containing one nonterminal");
+            System.out.println("9. Exit");
             System.out.print("Enter your choice: ");
 
             try {
@@ -53,6 +54,7 @@ public class Main {
                     String nonterminal = scanner.nextLine();
                     System.out.println(parser.getGrammar().getProdForOne(nonterminal));
                 }
+
                 case 5 -> System.out.println(parser.getGrammar().isCFG());
                 case 6 -> {
                     System.out.println(parser.getParseTable().toString());
@@ -61,10 +63,16 @@ public class Main {
                 case 7 -> {
                     System.out.println(parser.parseSource());
                 }
-                case 8 -> System.out.println("Goodbye!");
+                case 8 -> {
+                    scanner.nextLine(); // Consume the newline character
+                    System.out.print("Enter a nonterminal: ");
+                    String nonterminal = scanner.nextLine();
+                    System.out.println(parser.getGrammar().getProductionsContainingNonterminal(nonterminal));
+                }
+                case 9 -> System.out.println("Goodbye!");
                 default -> System.out.println("Invalid choice. Please select a valid option.");
             }
-        } while (choice != 8);
+        } while (choice != 9);
 
         scanner.close();
 

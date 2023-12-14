@@ -8,7 +8,8 @@ ceva c;
 amu_ia(c <- 2; c <=76; c <- c+1){
 	ii(b % c = 0){
 		a <- 1;
-		termina;
+	}
+	nu_i {
 	}
 }
 
