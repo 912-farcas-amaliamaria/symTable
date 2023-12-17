@@ -2,9 +2,69 @@ package org.example;
 
 
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
+
+
+class ProductionNode {
+    int productionNumber;
+    ProductionNode father;
+    ProductionNode nextSibling;
+
+    ProductionNode(int productionNumber) {
+        this.productionNumber = productionNumber;
+        this.father = null;
+        this.nextSibling = null;
+    }
+}
+
+class ParserTreeBuilder {
+    private final List<ProductionNode> productionNodes = new ArrayList<>();
+    private final Map<Integer, ProductionNode> lastChildMap = new HashMap<>();
+
+    public void buildTree(Map<Pair<String, List<String>>, Integer> productionsNumbered, Stack<String> productionsOrder) {
+
+        int index = 0;
+        while (!productionsOrder.isEmpty()) {
+            String currentProduction = productionsOrder.pop();
+            Integer productionNumber = (Objects.equals(currentProduction, "ε")) ? -1 :Integer.parseInt(currentProduction);
+
+            ProductionNode node = new ProductionNode(productionNumber);
+            productionNodes.add(node);
+
+            // Assume the first node is the root and doesn't have a father
+            if (index > 0) {
+                // Find the father node
+                // This logic might need to be adjusted based on how your productions are structured
+                ProductionNode father = productionNodes.get(index - 1);
+                node.father = father;
+                lastChildMap.put(father.productionNumber, node);
+
+                // Set the next sibling
+                if (lastChildMap.containsKey(productionNumber)) {
+                    ProductionNode lastChild = lastChildMap.get(productionNumber);
+                    lastChild.nextSibling = node;
+                }
+            }
+
+            index++;
+        }
+    }
+
+    public int[][] createFatherSiblingTable() {
+        int[][] table = new int[productionNodes.size()][3];
+        for (int i = 0; i < productionNodes.size(); i++) {
+            ProductionNode node = productionNodes.get(i);
+            table[i][0] = node.productionNumber;
+            table[i][1] = node.father != null ? productionNodes.indexOf(node.father) : -1;
+            table[i][2] = node.nextSibling != null ? productionNodes.indexOf(node.nextSibling) : -1;
+        }
+        return table;
+    }
+}
 
 public class Main {
+
     public static void main(String[] args) {
 
         FiniteAutomata finiteAutomataIdentifier = new FiniteAutomata("/FA_identifier.in");
@@ -62,6 +122,15 @@ public class Main {
                 }
                 case 7 -> {
                     System.out.println(parser.parseSource());
+                    for (String i :
+                            parser.getProductionsOrder()) {
+                        System.out.println(parser.getProductionsNumbered().entrySet().stream().filter(entry -> i.equals(entry.getValue().toString())).map(Map.Entry::getKey).collect(Collectors.toList()));
+                    }
+                    ParserTreeBuilder treeBuilder = new ParserTreeBuilder();
+                    treeBuilder.buildTree(parser.getProductionsNumbered(), parser.getProductionsOrder());
+                    int[][] table = treeBuilder.createFatherSiblingTable();
+                    for (int[] row : table)
+                        System.out.println(Arrays.toString(row));
                 }
                 case 8 -> {
                     scanner.nextLine(); // Consume the newline character
@@ -78,7 +147,7 @@ public class Main {
 
     }
 
-    static void FAMenu(FiniteAutomata FA, Scanner scanner){
+    static void FAMenu(FiniteAutomata FA, Scanner scanner) {
         int choice;
 
         do {
