@@ -52,7 +52,7 @@ public class Parser {
 
         grammar = new Grammar(filePathGrammar);
 
-        scan("/in/p3.txt");
+        scan("/in/p1err.txt");
         calculateFirstSets();
 
         calculateFollowSets();
@@ -446,6 +446,8 @@ public class Parser {
             if (parseTableEntry == null) {
                 go = false;
                 result = false;
+                System.out.println("Error at token: " + inputStack.peek());
+
             } else {
                 List<String> production = parseTableEntry.getKey();
                 Integer productionPos = parseTableEntry.getValue();

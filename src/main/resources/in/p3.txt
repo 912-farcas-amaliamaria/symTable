@@ -12,4 +12,3 @@ ii (a>b) {
 } nu_i {
 	pune -> "b > a";
 }
-

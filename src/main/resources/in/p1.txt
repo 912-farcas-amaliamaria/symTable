@@ -12,6 +12,5 @@ atata_cat(b < a ) {
 	b <- b- a;
 	c <- c + 1;
 }
-
 pune -> "a in b de " + c + " ori";
 
