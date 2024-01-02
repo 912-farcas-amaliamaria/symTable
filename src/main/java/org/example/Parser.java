@@ -367,7 +367,6 @@ public class Parser {
     private void createParseTable() {
         numberingProductions();
 
-
         // Initialize the table with pop and acc actions for terminals and end symbol
         parseTable.put(new Pair<>("$", "$"), new Pair<>(Collections.singletonList("acc"), -1));
         for (String terminal : grammar.getTerminals()) {
