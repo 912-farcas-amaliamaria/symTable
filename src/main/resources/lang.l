@@ -1,5 +1,8 @@
 %{
-int lines = 0;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int lines = 1;
 %}
 
 %option noyywrap
@@ -8,55 +11,57 @@ WS           [ \t\n]
 DIGIT        [0-9]
 LETTER       [A-Za-z]
 LETTER_SMALL [a-z]
-ID           ({LETTER_SMALL})+
+IDENTIFIER   ({LETTER_SMALL})+
 NUMBER       [1-9][0-9]*|0
-STRING       ["]([a-zA-Z0-9])*["]
-CHAR         [']([a-zA-Z0-9])[']
+STRING       \"[^\"]*\"
+CHAR         [\']([a-zA-Z0-9])[\']
 
 %%
 
-"ceva"       { printf("Reserved Word: ceva\n"); }
-"amu_ia"     { printf("Reserved Word: amu_ia\n"); }
-"atata_cat"  { printf("Reserved Word: atata_cat\n"); }
-"ii"         { printf("Reserved Word: ii\n"); }
-"nu_i"       { printf("Reserved Word: nu_i\n"); }
-"pune"       { printf("Reserved Word: pune\n"); }
-"ia"         { printf("Reserved Word: ia\n"); }
-"termina"    { printf("Reserved Word: termina\n"); }
+"ceva"|"amu_ia"|"atata_cat"|"ii"|"nu_i"|"pune"|"ia"|"termina"    {printf("Reserved word: %s\n", yytext);}
 
 
-";" 	{printf( "Separator: %s\n", yytext ); return SEMI_COLON;}
-"(" 	{printf( "Separator: %s\n", yytext ); return LEFT_ROUND_PARENTHESIS;}
-")"	    {printf( "Separator: %s\n", yytext ); return RIGHT_ROUND_PARENTHESIS;}
-"{"	    {printf( "Separator: %s\n", yytext ); return LEFT_CURLY_PARENTHESIS;}
-"}"  	{printf( "Separator: %s\n", yytext ); return RIGHT_CURLY_PARENTHESIS;}
+";"|"("|")"|"{"|"}"  	{printf( "Separator: %s\n", yytext );}
 
-"+"  	{printf( "Operator: %s\n", yytext ); return PLUS;}
-"-" 	{printf( "Operator: %s\n", yytext ); return MINUS;}
-"*"	    {printf( "Operator: %s\n", yytext ); return MULTIPLY;}
-"/"	    {printf( "Operator: %s\n", yytext ); return DIVISION;}
-"<"  	{printf( "Operator: %s\n", yytext ); return LESS_THAN;}
-"%" 	{printf( "Operator: %s\n", yytext ); return LESS_THAN;}
-">"	    {printf( "Operator: %s\n", yytext ); return MOD;}
-"<="	{printf( "Operator: %s\n", yytext ); return LESS_OR_EQUAL_THAN;}
-">="	{printf( "Operator: %s\n", yytext ); return GREATER_OR_EQUAL_THAN;}
-"!="	{printf( "Operator: %s\n", yytext ); return DIFFERENT;}
-"=" 	{printf( "Operator: %s\n", yytext ); return EQUAL;}
-"->"	{printf( "Operator: %s\n", yytext ); return ASSIGNMENT;}
-"<-"	{printf( "Operator: %s\n", yytext ); return PRINT;}
+"+"|"-"|"*"|"/"|"<"|"%"|">"|"<="|">="|"!="|"="|"->"|"<-"	{printf( "Operator: %s\n", yytext );}
 
 
-{ID}         { printf("Identifier: %s\n", yytext); }
+{IDENTIFIER}         { printf("Identifier: %s\n", yytext); }
 
-[ \t]+	/* elimina spatii */  	{}
+{NUMBER}		{printf("Number: %s\n", yytext);}
+{STRING}		{printf("String: %s\n", yytext);}
+{CHAR}		{printf("Character: %s\n", yytext);}
 
-[\n]+	{++lines;}
+[ \t]+	{}
 
-[a-zA-Z][a-zA-Z0-9]{8,}	{printf("Illegal size of the identifier at line %d\n", lines); return -1;}
+[\r\n]+	{++lines;}
+
 
 [a-zA-Z0-9_]+	{printf("Illegal identifier at line %d\n", lines); return -1;}
 
+[+|-]?[0][0-9]*([.][0-9]*)?		{printf("Illegal numeric constant at line %d\n", lines);}
 
-.	{printf("Illegal symbol at line\n"); return -1;}
+[\'][a-zA-Z0-9 ]{2,}[\']|[\'][a-zA-Z0-9 ][a-zA-Z0-9 ][\']		{printf("Illegal character constant at line %d\n", lines);}
+
+
+.	{printf("Illegal symbol at line %d\n", lines); return -1;}
 
 %%
+
+void main(argc, argv)
+int argc;
+char** argv;
+{
+if (argc > 1)
+{
+    FILE *file;
+    file = fopen(argv[1], "r");
+    if (!file)
+    {
+        fprintf(stderr, "Could not open %s\n", argv[1]);
+        exit(1);
+    }
+    yyin = file;
+}
+yylex();
+}
