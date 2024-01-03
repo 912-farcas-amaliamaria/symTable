@@ -1,4 +1,4 @@
-ceva a;;
+ceva A_;
 ceva b;
 
 a <- 8;
